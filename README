@@ -1,0 +1,8 @@
+Generic Distributed Client Simulation with two implementations provided
+
+  * GossipSimulator
+    - Utilizes a trivial "gossip" protocol to flood the buddy network with status information every minute. State converges relatively quickly with high probabiliity
+
+  * HeartbeatSimulator
+    - Utilizes a trivial round robin "heartbeating" protocol to keep buddy network up-to-date with latest status information.
+
