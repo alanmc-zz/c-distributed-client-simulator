@@ -1,0 +1,67 @@
+#ifndef _HASH_SET_WRAPPER_H_
+#define _HASH_SET_WRAPPER_H_
+
+#if (__GNUG__<3)
+#error Please use the GCC 3.X compiler or the STLport implementaiton of hash_map
+#else
+
+// std::hash_map is part of STLport.  This wrapper for __gnu_cxx::hash_map is only provided for backwards compatibility and may be depricated in the future.
+
+#include <ext/hash_set>
+
+using __gnu_cxx::hash_set;
+
+#ifndef _HASHFUNCS_DEFINED_
+#define _HASHFUNCS_DEFINED_
+
+// any changes you make here must also be made in the corresponding hash function in wrappaer/hash_map
+
+#include <string>
+
+#define SHIFT_AMOUNT (8*sizeof(size_t))
+#define MASK ((size_t)(~0ULL))
+
+namespace __gnu_cxx
+{
+        template<> struct hash<std::string>
+        {
+                size_t operator()(const std::string& __s) const { return __stl_hash_string(__s.c_str());}
+        };
+
+        template<> struct hash<long long unsigned int>
+        {
+                size_t inline operator()(const long long unsigned int v) const {
+#if __WORDSIZE == 64
+                        return (size_t)v;
+#else
+                        return ((size_t)((v >> SHIFT_AMOUNT) & MASK)) ^ ((size_t)(v & MASK));
+#endif
+                }
+        };
+
+        template<> struct hash<long long int>
+        {
+                size_t inline operator()(const long long int v) const {
+#if __WORDSIZE == 64
+                        return (size_t)v;
+#else
+                        return ((size_t)((v >> SHIFT_AMOUNT) & MASK)) ^ ((size_t)(v & MASK));
+#endif
+                }
+        };
+
+}
+
+#undef SHIFT_AMOUNT
+#undef MASK
+
+#endif
+
+namespace std
+{
+        using __gnu_cxx::hash_set;
+}
+
+#endif
+
+#endif
